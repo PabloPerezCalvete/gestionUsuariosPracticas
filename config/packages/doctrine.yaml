@@ -25,7 +25,13 @@ doctrine:
 
 when@test:
     doctrine:
-        dbal:
+         dbal:
+            user:     '%env(DATABASE_USER)%'
+            password: '%env(DATABASE_PASSWORD)%'
+            host:     '%env(DATABASE_HOST)%'
+            port:     '%env(DATABASE_PORT)%'
+            dbname:   '%env(DATABASE_NAME)%'
+            driver:   pdo_mysql
             # "TEST_TOKEN" is typically set by ParaTest
             dbname_suffix: '_test%env(default::TEST_TOKEN)%'
 

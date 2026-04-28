@@ -1,0 +1,43 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+<div class="container mt-5">
+
+    <div class="card shadow">
+        <div class="card-body">
+
+            <h1 class="mb-4 text-primary">Registro de usuarios</h1>
+
+            <nav class="d-flex flex-column gap-3">
+
+                {% if not is_granted('IS_AUTHENTICATED_FULLY') %}
+                    <a href="{{ path('app_login') }}" class="btn btn-outline-primary">
+                        Iniciar sesión
+                    </a>
+                {% endif %}
+
+                {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+                    <div class="alert alert-info">
+                        Hola, <strong>{{ app.user.userIdentifier }}</strong>
+                    </div>
+
+                    <a href="{{ path('app_logout') }}" class="btn btn-danger">
+                        Cerrar sesión
+                    </a>
+                {% endif %}
+
+                {% if is_granted('ROLE_ADMIN') %}
+                    <hr>
+
+                    <a href="{{ path('app_user_index') }}" class="btn btn-warning">
+                        Gestión de Usuarios
+                    </a>
+                {% endif %}
+
+            </nav>
+
+        </div>
+    </div>
+
+</div>
+{% endblock %}

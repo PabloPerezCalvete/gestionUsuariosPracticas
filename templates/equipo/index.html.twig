@@ -1,0 +1,106 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Gestión de Equipos{% endblock %}
+
+{% block body %}
+<div class="container" style="margin: 20px auto; max-width: 1000px; font-family: sans-serif;">
+    
+    <h1>Inventario de Equipos Informáticos</h1>
+
+    {# Bloque para mensajes de éxito o error #}
+    {% for label, messages in app.flashes %}
+        {% for message in messages %}
+            <div style="padding: 10px; margin-bottom: 20px; border-radius: 5px; 
+                background-color: {{ label == 'success' ? '#d4edda' : '#f8d7da' }}; 
+                color: {{ label == 'success' ? '#155724' : '#721c24' }};">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endfor %}
+
+    {# SECCIÓN 1: FORMULARIO DE ALTA #}
+    <section style="background: #f8f9fa; padding: 20px; border: 1px solid #ddd; border-radius: 8px; margin-bottom: 40px;">
+        <h3 style="margin-top: 0;">Registrar Nuevo Equipo</h3>
+        
+        {{ form_start(form) }}
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                {{ form_row(form.marca) }}
+                {{ form_row(form.modelo) }}
+                {{ form_row(form.numeroSerie) }}
+                {{ form_row(form.tipo) }}
+                {{ form_row(form.estado) }}
+                {{ form_row(form.propietario, {'label': 'Asignar a Usuario'}) }}
+            </div>
+            <button class="btn" style="margin-top: 15px; padding: 10px 20px; background: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                Guardar Equipo
+            </button>
+        {{ form_end(form) }}
+    </section>
+
+    <hr>
+
+    {# SECCIÓN 2: TABLA DE LISTADO #}
+    <h3>Listado de Equipos</h3>
+    <table border="1" style="width: 100%; border-collapse: collapse; text-align: left;">
+        <thead style="background: #343a40; color: white;">
+            <tr>
+                <th style="padding: 10px;">Marca</th>
+                <th style="padding: 10px;">Modelo</th>
+                <th style="padding: 10px;">S/N (Serie)</th>
+                <th style="padding: 10px;">Tipo</th>
+                <th style="padding: 10px;">Estado</th>
+                <th style="padding: 10px;">Propietario</th>
+                <th style="padding: 10px;">Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for e in equipos %}
+            <tr style="border-bottom: 1px solid #ddd;">
+                <td style="padding: 10px;">{{ e.marca }}</td>
+                <td style="padding: 10px;">{{ e.modelo }}</td>
+                <td style="padding: 10px;"><code>{{ e.numeroSerie }}</code></td>
+                <td style="padding: 10px;">{{ e.tipo }}</td>
+                <td style="padding: 10px;">
+                    <span style="padding: 3px 8px; border-radius: 10px; font-size: 0.85em; background: #eee;">
+                        {{ e.estado }}
+                    </span>
+                </td>
+                
+                {# COLUMNA DE RELACIÓN CON USUARIO #}
+                <td style="padding: 10px;">
+                    {% if e.propietario %}
+                        <strong style="color: #0056b3;"> {{ e.propietario.email }}</strong>
+                    {% else %}
+                        <span style="color: #999; font-style: italic;"> Disponible (Stock)</span>
+                    {% endif %}
+                </td>
+
+                <td style="padding: 10px;">
+                    <div style="display: flex; gap: 10px;">
+                        <a href="{{ path('app_equipo_edit', {id: e.id}) }}" style="color: #ffc107; text-decoration: none;">Editar</a>
+                        
+                        {# Formulario para borrar (por seguridad usa POST y CSRF Token) #}
+                        <form method="post" action="{{ path('app_equipo_delete', {id: e.id}) }}" onsubmit="return confirm('¿Seguro que quieres eliminar este equipo?');">
+                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ e.id) }}">
+                            <button style="background: none; border: none; color: #dc3545; cursor: pointer; padding: 0; font: inherit; text-decoration: underline;">
+                                Borrar
+                            </button>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="7" style="padding: 20px; text-align: center; color: #666;">
+                    No hay equipos registrados en el inventario.
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <div style="margin-top: 30px;">
+        <p><a href="{{ path('app_user_index') }}">← Volver a Gestión de Usuarios</a></p>
+    </div>
+</div>
+{% endblock %}

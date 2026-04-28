@@ -1,0 +1,71 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Editar Equipo{% endblock %}
+
+{% block body %}
+<div style="max-width: 800px; margin: 40px auto; font-family: sans-serif;">
+    
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+        <h1>Editar Equipo: <span style="color: #555;">{{ equipo.marca }} {{ equipo.modelo }}</span></h1>
+        <span style="background: #eee; padding: 5px 10px; border-radius: 4px; font-size: 0.9em;">
+            ID: #{{ equipo.id }}
+        </span>
+    </div>
+
+    <div style="background: #fff; border: 1px solid #ddd; padding: 30px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+        
+        {{ form_start(form) }}
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <div class="form-group">
+                    {{ form_label(form.marca, 'Marca del Fabricante') }}
+                    {{ form_widget(form.marca, {'attr': {'style': 'width:100%; padding:8px; margin-top:5px;'}}) }}
+                </div>
+
+                <div class="form-group">
+                    {{ form_label(form.modelo, 'Modelo del Dispositivo') }}
+                    {{ form_widget(form.modelo, {'attr': {'style': 'width:100%; padding:8px; margin-top:5px;'}}) }}
+                </div>
+
+                <div class="form-group">
+                    {{ form_label(form.numeroSerie, 'Número de Serie (S/N)') }}
+                    {{ form_widget(form.numeroSerie, {'attr': {'style': 'width:100%; padding:8px; margin-top:5px;'}}) }}
+                </div>
+
+                <div class="form-group">
+                    {{ form_label(form.tipo, 'Categoría') }}
+                    {{ form_widget(form.tipo, {'attr': {'style': 'width:100%; padding:8px; margin-top:5px;'}}) }}
+                </div>
+
+                <div class="form-group">
+                    {{ form_label(form.estado, 'Estado Actual') }}
+                    {{ form_widget(form.estado, {'attr': {'style': 'width:100%; padding:8px; margin-top:5px;'}}) }}
+                </div>
+
+                <div class="form-group" style="background: #f0f7ff; padding: 10px; border-radius: 4px;">
+                    {{ form_label(form.propietario, '👤 Usuario Asignado') }}
+                    {{ form_widget(form.propietario, {'attr': {'style': 'width:100%; padding:8px; margin-top:5px;'}}) }}
+                </div>
+            </div>
+
+            <div style="margin-top: 30px; border-top: 1px solid #eee; padding-top: 20px; display: flex; gap: 15px;">
+                <button type="submit" style="background: #007bff; color: white; border: none; padding: 10px 25px; border-radius: 4px; cursor: pointer; font-weight: bold;">
+                    Guardar Cambios
+                </button>
+                
+                <a href="{{ path('app_equipo_index') }}" style="background: #6c757d; color: white; text-decoration: none; padding: 10px 25px; border-radius: 4px; font-weight: bold;">
+                    Cancelar
+                </a>
+            </div>
+        {{ form_end(form) }}
+    </div>
+
+    <div style="margin-top: 20px; text-align: center;">
+        <form method="post" action="{{ path('app_equipo_delete', {'id': equipo.id}) }}" onsubmit="return confirm('¿Estás totalmente seguro de eliminar este equipo?');">
+            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ equipo.id) }}">
+            <button style="background: none; border: none; color: #dc3545; cursor: pointer; text-decoration: underline;">
+                Eliminar equipo permanentemente
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %}

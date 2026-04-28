@@ -1,0 +1,30 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h2>Nuevo Usuario</h2>
+    {{ form_start(form) }}
+        {{ form_row(form.email) }}
+        {{ form_row(form.roles) }}
+        {{ form_row(form.plainPassword, {'label': 'Contraseña'}) }}
+        <button type="submit">Registrar</button>
+    {{ form_end(form) }}
+
+    <hr>
+
+    <h2>Usuarios Existentes</h2>
+    <table>
+        {% for u in users %}
+            <tr>
+                <td>{{ u.email }}</td>
+                <td>{{ u.roles|join(', ') }}</td>
+                <td>
+                    <a href="{{ path('app_user_edit', {id: u.id}) }}">Editar</a>
+                    <form method="post" action="{{ path('app_user_delete', {id: u.id}) }}" style="display:inline" onsubmit="return confirm('¿Seguro?')">
+                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ u.id) }}">
+                        <button type="submit">Eliminar</button>
+                    </form>
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endblock %}
