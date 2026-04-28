@@ -1,7 +1,35 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-<h1>Perfil</h1>
-<p>{{ app.user.email }}</p>
-<p><a href="{{ path('app_logout') }}">Cerrar sesión</a></p>
+<div class="container mt-5">
+
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+
+            <div class="card shadow-sm text-center">
+                <div class="card-body">
+
+                    <h1 class="h3 mb-4">Perfil de Usuario</h1>
+
+                    <div class="mb-3">
+                        <span class="badge bg-primary p-2">
+                            {{ app.user.email }}
+                        </span>
+                    </div>
+
+                    <hr>
+
+                    <div class="d-grid">
+                        <a href="{{ path('app_logout') }}" class="btn btn-danger">
+                            Cerrar sesión
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</div>
 {% endblock %}
