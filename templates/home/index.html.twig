@@ -6,7 +6,7 @@
     <div class="card shadow">
         <div class="card-body">
 
-            <h1 class="mb-4 text-primary">Registro de usuarios</h1>
+           
 
             <nav class="d-flex flex-column gap-3">
 
@@ -18,7 +18,7 @@
 
                 {% if is_granted('IS_AUTHENTICATED_FULLY') %}
                     <div class="alert alert-info">
-                        Hola, <strong>{{ app.user.userIdentifier }}</strong>
+                        Registrado como: <strong>{{ app.user.userIdentifier }}</strong>
                     </div>
 
                     <a href="{{ path('app_logout') }}" class="btn btn-danger">

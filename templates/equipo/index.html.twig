@@ -1,13 +1,15 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}Gestión de Equipos{% endblock %}
+{% block page_title %}Equipos{% endblock %}
 
 {% block body %}
+
 <div class="container mt-5">
 
     <h1 class="mb-4">Inventario de Equipos Informáticos</h1>
 
-    {# 🔔 Flash messages #}
+    {# Flash messages #}
     {% for label, messages in app.flashes %}
         {% for message in messages %}
             <div class="alert alert-{{ label == 'success' ? 'success' : 'danger' }}">
@@ -16,7 +18,7 @@
         {% endfor %}
     {% endfor %}
 
-    {# 🧾 FORMULARIO #}
+    {# FORMULARIO #}
     <div class="card mb-5 shadow-sm">
         <div class="card-body">
             <h3 class="card-title mb-4">Registrar Nuevo Equipo</h3>
@@ -55,7 +57,7 @@
         </div>
     </div>
 
-    {# 📊 TABLA #}
+    {# TABLA #}
     <h3 class="mb-3">Listado de Equipos</h3>
 
     <div class="table-responsive">

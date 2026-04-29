@@ -1,28 +1,210 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="UTF-8">
-        <title>{% block title %}Welcome!{% endblock %}</title>
-        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text><text y=%221.3em%22 x=%220.2em%22 font-size=%2276%22 fill=%22%23fff%22>sf</text></svg>">
-        {% block stylesheets %}
-            {{ encore_entry_link_tags('app') }}
-        {% endblock %}
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}App{% endblock %}</title>
 
-        {% block javascripts %}
-            {{ encore_entry_script_tags('app') }}
-            {% block importmap %}{{ importmap('app') }}{% endblock %}
-        {% endblock %}
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
-        {% set frankenphpHotReload = app.request.server.get('FRANKENPHP_HOT_RELOAD') %}
-        {% if frankenphpHotReload %}
-        <meta name="frankenphp-hot-reload:url" content="{{ frankenphpHotReload }}">
-        <script src="https://cdn.jsdelivr.net/npm/idiomorph"></script>
-        <script src="https://cdn.jsdelivr.net/npm/frankenphp-hot-reload/+esm" type="module"></script>
+    <style>
+        body {
+            margin: 0;
+            background-color: #f4f4f4;
+        }
+
+        /* SIDEBAR */
+        .sidebar {
+            background-color: #f8f9fa;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 240px;
+            height: 100vh;
+            overflow-y: auto;
+            border-right: 1px solid #ddd;
+            transition: width 0.3s ease;
+        }
+
+        /* SIDEBAR CERRADA */
+        .sidebar.collapsed {
+            width: 0;
+            overflow: hidden;
+            padding: 0;
+        }
+
+        .sidebar-title {
+            color: #333;
+            font-weight: 600;
+            padding: 10px 0;
+        }
+
+        .sidebar .nav-link {
+            color: #444;
+            padding: 10px 15px;
+            border-radius: 4px;
+            margin-bottom: 3px;
+            font-size: 0.9rem;
+        }
+
+        .sidebar .nav-link:hover {
+            background-color: #e9ecef;
+            color: #000;
+        }
+
+        .sidebar .nav-link.active {
+            background-color: #dee2e6;
+            font-weight: 500;
+        }
+
+        .sidebar hr {
+            border-color: #ddd;
+        }
+
+        .user-link {
+            color: #555;
+            text-decoration: none;
+            padding: 8px 15px;
+            display: block;
+        }
+
+        .user-link:hover {
+            color: #000;
+        }
+
+        .admin-label {
+            color: #999;
+            font-size: 0.75rem;
+            padding-left: 15px;
+            text-transform: uppercase;
+        }
+
+        /* TOPBAR */
+        .topbar {
+            background-color: #f58220;
+            color: white;
+            padding: 15px;
+            font-weight: bold;
+            text-align: center;
+            position: relative;
+        }
+
+        /* BOTÓN */
+        .toggle-btn {
+            position: absolute;
+            left: 15px;
+            top: 10px;
+            background: transparent;
+            border: none;
+            color: white;
+            font-size: 22px;
+            cursor: pointer;
+        }
+
+        /* CONTENIDO */
+        .main-content {
+            margin-left: 240px;
+            transition: margin-left 0.3s ease;
+        }
+
+        /* CUANDO SIDEBAR ESTÁ CERRADA */
+        .main-content.full {
+            margin-left: 0;
+        }
+
+        .content {
+            padding: 20px;
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- SIDEBAR (empieza cerrada) -->
+<nav id="sidebar" class="sidebar collapsed ">
+
+    <h4 class="sidebar-title">Gestion usuarios</h4>
+    <hr>
+
+    <ul class="nav flex-column">
+
+        {% if is_granted('ROLE_ADMIN') %}
+            <li class="nav-item">
+                <a href="{{ path('app_equipo_index') }}" 
+                   class="nav-link {{ app.request.get('_route') starts with 'app_equipo' ? 'active' }}">
+                    Equipos
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a href="{{ path('app_user_index') }}" 
+                   class="nav-link {{ app.request.get('_route') starts with 'app_user' ? 'active' }}">
+                    Usuarios
+                </a>
+            </li>
         {% endif %}
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    </head>
-    <body>
-        {% block body %}
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>{% endblock %}
-    </body>
+
+        {% if is_granted('ROLE_ADMIN') %}
+            <li class="nav-item">
+                <span class="admin-label">
+                    Admin
+                </span>
+            </li>
+        {% endif %}
+
+        <hr>
+
+        {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+            <li class="nav-item">
+                <a href="{{ path('app_user_profile') }}" class="user-link">
+                    {{ app.user.userIdentifier }}
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a href="{{ path('app_logout') }}" class="nav-link text-danger">
+                    Logout
+                </a>
+            </li>
+        {% else %}
+            <li class="nav-item">
+                <a href="{{ path('app_login') }}" class="nav-link">
+                    Login
+                </a>
+            </li>
+        {% endif %}
+
+    </ul>
+</nav>
+
+<!-- CONTENIDO -->
+<div id="main" class="main-content full">
+
+    <div class="topbar">
+
+        <button class="toggle-btn" onclick="toggleSidebar()">
+            ☰
+        </button>
+
+        {% block page_title %}Inicio{% endblock %}
+
+    </div>
+
+    <div class="content">
+        {% block body %}{% endblock %}
+    </div>
+
+</div>
+
+<!-- JS -->
+<script>
+function toggleSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    const main = document.getElementById('main');
+
+    sidebar.classList.toggle('collapsed');
+    main.classList.toggle('full');
+}
+</script>
+
+</body>
 </html>
