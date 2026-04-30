@@ -1,0 +1,17 @@
+{{ form_start(form) }}
+
+<div class="mb-3">
+    {{ form_label(form.nombre) }}
+    {{ form_widget(form.nombre, {'attr': {'class': 'form-control'}}) }}
+</div>
+
+<div class="mb-3">
+    {{ form_label(form.descripcion) }}
+    {{ form_widget(form.descripcion, {'attr': {'class': 'form-control'}}) }}
+</div>
+
+<button class="btn btn-primary">
+    {{ button_label|default('Guardar') }}
+</button>
+
+{{ form_end(form) }}

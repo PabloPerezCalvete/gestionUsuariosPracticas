@@ -1,0 +1,63 @@
+{% extends 'base.html.twig' %}
+
+{% block page_title %}Detalle Grupo{% endblock %}
+
+{% block body %}
+<div class="container mt-4">
+
+    <div class="card shadow-sm mb-4">
+     
+        <div class="card-body">
+            <table class="table">
+                <tbody>
+                    <tr>
+                        <th style="width: 200px;">ID</th>
+                        <td>{{ grupo.id }}</td>
+                    </tr>
+                    <tr>
+                        <th>Nombre</th>
+                        <td>{{ grupo.nombre }}</td>
+                    </tr>
+                    <tr>
+                        <th>Descripción</th>
+                        <td>{{ grupo.descripcion|default('Sin descripción') }}</td>
+                    </tr>
+                    {# SECCIÓN DE USUARIOS #}
+                    <tr>
+                        <th>Integrantes</th>
+                        <td>
+                            {% if grupo.users|length > 0 %}
+                                <ul class="list-group list-group-flush">
+                                    {% for usuario in grupo.users %}
+                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <strong>{{ usuario.email }}</strong> 
+                                                
+                                            </div>
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            {% else %}
+                                <span class="text-muted italic">No hay usuarios asignados a este grupo.</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="d-flex gap-2">
+        <a href="{{ path('app_grupo_index') }}" class="btn btn-outline-secondary">
+            ← Volver al listado
+        </a>
+
+        <a href="{{ path('app_grupo_edit', {'id': grupo.id}) }}" class="btn btn-warning">
+            Editar Grupo
+        </a>
+
+        {{ include('grupo/_delete_form.html.twig') }}
+    </div>
+
+</div>
+{% endblock %}

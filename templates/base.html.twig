@@ -141,6 +141,12 @@
                     Usuarios
                 </a>
             </li>
+              <li class="nav-item">
+                <a href="{{ path('app_grupo_index') }}" 
+                   class="nav-link {{ app.request.get('_route') starts with 'app_user' ? 'active' }}">
+                    Grupos
+                </a>
+            </li>
         {% endif %}
 
         {% if is_granted('ROLE_ADMIN') %}
