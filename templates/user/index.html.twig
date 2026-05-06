@@ -4,8 +4,14 @@
 
 <div class="container mt-5">
 
+<div class="mb-4">
+    <button class="btn btn-success" type="button" data-bs-toggle="collapse" data-bs-target="#collapseNuevoUsuario" aria-expanded="false" aria-controls="collapseNuevoUsuario">
+        <i class="fas fa-user-plus"></i> + Nuevo Usuario
+    </button>
+</div>
     <!-- FORMULARIO NUEVO USUARIO -->
-    <div class="card shadow-sm mb-5">
+    <div class="collapse mb-5" id="collapseNuevoUsuario">
+    <div class="card shadow-sm">
         <div class="card-body">
 
             <h2 class="mb-4">Nuevo Usuario</h2>
@@ -26,15 +32,25 @@
                 {{ form_label(form.plainPassword, 'Contraseña', {'label_attr': {'class': 'form-label'}}) }}
                 {{ form_widget(form.plainPassword, {'attr': {'class': 'form-control'}}) }}
             </div>
+            <div class="mb-3">
+                {{ form_label(form.grupo, 'Grupo', {'label_attr': {'class': 'form-label'}}) }}
+                {{ form_widget(form.grupo, {'attr': {'class': 'form-select'}}) }}
+            </div>
 
-            <button type="submit" class="btn btn-success">
-                Registrar
-            </button>
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-success">
+                    Registrar
+                </button>
+                <button type="button" class="btn btn-outline-secondary" data-bs-toggle="collapse" data-bs-target="#collapseNuevoUsuario">
+                    Cancelar
+                </button>
+            </div>
 
             {{ form_end(form) }}
 
         </div>
     </div>
+</div>
 
     <!-- LISTADO DE USUARIOS -->
     <h2 class="mb-3">Usuarios Existentes</h2>

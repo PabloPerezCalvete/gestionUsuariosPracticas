@@ -18,13 +18,17 @@
         {% endfor %}
     {% endfor %}
 
+
+    <button class="btn btn-psuccess" type="button" data-bs-toggle="collapse" data-bs-target="#contenedorNuevoEquipo" aria-expanded="false" aria-controls="contenedorNuevoEquipo">
+        <i class="fas fa-plus"></i> + Nuevo Equipo
+    </button>
     {# FORMULARIO #}
-    <div class="card mb-5 shadow-sm">
-        <div class="card-body">
-            <h3 class="card-title mb-4">Registrar Nuevo Equipo</h3>
+   <div class="collapse mb-4" id="contenedorNuevoEquipo">
+    <div class="card card-body shadow-sm">
+        <h5 class="mb-3">Registrar Equipo</h5>
+        <hr>
 
-            {{ form_start(form) }}
-
+        {{ form_start(form) }}
             <div class="row g-3">
                 <div class="col-md-6">
                     {{ form_row(form.marca, {'attr': {'class': 'form-control'}}) }}
@@ -47,16 +51,21 @@
                         'attr': {'class': 'form-select'}
                     }) }}
                 </div>
+            </div> 
+
+            <div class="mt-4 d-flex gap-2">
+                <button type="submit" class="btn btn-success">
+                    Guardar Equipo
+                </button>
+                <!-- Botón extra para cerrar el formulario si se arrepienten -->
+                <button type="button" class="btn btn-outline-secondary" data-bs-toggle="collapse" data-bs-target="#contenedorNuevoEquipo">
+                    Cancelar
+                </button>
             </div>
 
-            <button class="btn btn-success mt-4">
-                Guardar Equipo
-            </button>
-
-            {{ form_end(form) }}
-        </div>
+        {{ form_end(form) }}
     </div>
-
+    </div>
     {# TABLA #}
     <h3 class="mb-3">Listado de Equipos</h3>
 

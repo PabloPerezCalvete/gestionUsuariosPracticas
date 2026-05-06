@@ -120,7 +120,7 @@
 <body>
 
 <!-- SIDEBAR (empieza cerrada) -->
-<nav id="sidebar" class="sidebar collapsed ">
+<nav id="sidebar" class="sidebar  ">
 
     <h4 class="sidebar-title">Gestion usuarios</h4>
     <hr>
@@ -143,57 +143,61 @@
             </li>
               <li class="nav-item">
                 <a href="{{ path('app_grupo_index') }}" 
-                   class="nav-link {{ app.request.get('_route') starts with 'app_user' ? 'active' }}">
+                   class="nav-link {{ app.request.get('_route') starts with 'app_grupo' ? 'active' }}">
                     Grupos
                 </a>
             </li>
         {% endif %}
 
-        {% if is_granted('ROLE_ADMIN') %}
-            <li class="nav-item">
-                <span class="admin-label">
-                    Admin
-                </span>
-            </li>
-        {% endif %}
 
         <hr>
 
-        {% if is_granted('IS_AUTHENTICATED_FULLY') %}
-            <li class="nav-item">
-                <a href="{{ path('app_user_profile') }}" class="user-link">
-                    {{ app.user.userIdentifier }}
-                </a>
-            </li>
-
-            <li class="nav-item">
-                <a href="{{ path('app_logout') }}" class="nav-link text-danger">
-                    Logout
-                </a>
-            </li>
-        {% else %}
-            <li class="nav-item">
-                <a href="{{ path('app_login') }}" class="nav-link">
-                    Login
-                </a>
-            </li>
-        {% endif %}
-
+        
     </ul>
 </nav>
 
 <!-- CONTENIDO -->
-<div id="main" class="main-content full">
+<div id="main" class="main-content">
 
-    <div class="topbar">
+<div class="topbar d-flex align-items-center justify-content-between px-3">
 
-        <button class="toggle-btn" onclick="toggleSidebar()">
+    <!-- Bloque Izquierdo: Botón y Título -->
+    <div class="d-flex align-items-center">
+        <button class="toggle-btn me-3" onclick="toggleSidebar()">
             ☰
         </button>
-
-        {% block page_title %}Inicio{% endblock %}
-
+        <div class="text-center" style="position: absolute; left: 50%; transform: translateX(-50%); width: auto; z-index: 1;">
+        <span class="h5 mb-0">
+            {% block page_title %}Inicio{% endblock %}
+        </span>
+        </div>
     </div>
+
+    <!-- Bloque Derecho: Usuario y Logout -->
+    <div class="d-flex align-items-center">
+        {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+            <!-- Cambiamos li por span para que no salte de línea -->
+            <span class="nav-item me-3">
+                <a href="{{ path('app_user_profile') }}" class="user-link text-decoration-none">
+                    <strong>{{ app.user.userIdentifier }}</strong>
+                </a>
+            </span>
+
+            <span class="nav-item">
+                <a href="{{ path('app_logout') }}" class="btn btn-sm btn-outline-danger">
+                    Logout
+                </a>
+            </span>
+        {% else %}
+            <span class="nav-item">
+                <a href="{{ path('app_login') }}" class="nav-link">
+                    Login
+                </a>
+            </span>
+        {% endif %}
+    </div>
+
+</div>
 
     <div class="content">
         {% block body %}{% endblock %}
@@ -211,6 +215,7 @@ function toggleSidebar() {
     main.classList.toggle('full');
 }
 </script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
 </html>
