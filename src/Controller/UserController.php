@@ -9,13 +9,15 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Email;
 
 #[Route('/admin/usuarios')]
 class UserController extends AbstractController
 {
     // LISTADO Y ALTA (Create)
     #[Route('/', name: 'app_user_index', methods: ['GET', 'POST'])]
-    public function index(Request $request, EntityManagerInterface $em, UserPasswordHasherInterface $hasher): Response
+    public function index(Request $request, EntityManagerInterface $em, UserPasswordHasherInterface $hasher,MailerInterface $mailer): Response
     {
         $user = new Usuario1();
         $form = $this->createForm(UserType::class, $user);
@@ -25,6 +27,13 @@ class UserController extends AbstractController
             $user->setPassword($hasher->hashPassword($user, $form->get('plainPassword')->getData()));
             $em->persist($user);
             $em->flush();
+            $email = (new Email())
+            ->from('admin@localhost')
+            ->to($user->getEmail())
+            ->subject('Bienvenido')
+            ->text('Tu cuenta ha sido creada correctamente');
+
+        $mailer->send($email);
             return $this->redirectToRoute('app_user_index');
         }
 
