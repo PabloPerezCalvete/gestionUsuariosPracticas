@@ -10,11 +10,12 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use App\Entity\Grupo;
+use Scheb\TwoFactorBundle\Model\Totp\TwoFactorInterface; // <--- Importamos la interfaz del 2FA
 
 #[ORM\Entity(repositoryClass: Usuario1Repository::class)]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
 #[UniqueEntity(fields: ['email'], message: 'There is already an account with this email')]
-class Usuario1 implements UserInterface, PasswordAuthenticatedUserInterface
+class Usuario1 implements UserInterface, PasswordAuthenticatedUserInterface, TwoFactorInterface // <--- Implementamos la interfaz
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -45,6 +46,10 @@ class Usuario1 implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\ManyToOne(inversedBy: 'users')]
     #[ORM\JoinColumn(nullable: true)]
     private ?Grupo $grupo = null;
+
+    // --- NUEVO CAMPO PARA EL SECRETO DE GOOGLE AUTHENTICATOR ---
+    #[ORM\Column(type: 'string', nullable: true)]
+    private ?string $totpSecret = null;
 
     public function __construct()
     {
@@ -138,6 +143,49 @@ class Usuario1 implements UserInterface, PasswordAuthenticatedUserInterface
     public function setGrupo(?Grupo $grupo): static
     {
         $this->grupo = $grupo;
+        return $this;
+    }
+
+    // =========================================================================
+    // MÉTODOS OBLIGATORIOS PARA SCHEB TWO FACTOR BUNDLE (GOOGLE AUTHENTICATOR)
+    // =========================================================================
+
+    public function isTotpAuthenticationEnabled(): bool
+    {
+        // Se activa el 2FA si el usuario tiene un código secreto guardado
+        return $this->totpSecret !== null;
+    }
+
+    public function getTotpAuthenticationUsername(): string
+    {
+        return (string) $this->email;
+    }
+
+    public function getTotpAuthenticationConfiguration(): ?\Scheb\TwoFactorBundle\Model\Totp\TotpConfigurationInterface
+    {
+        // Si no tiene secreto, no devolvemos configuración
+        if (!$this->totpSecret) {
+            return null;
+        }
+    
+        return new \Scheb\TwoFactorBundle\Model\Totp\TotpConfiguration(
+            $this->totpSecret,          // 1. Secreto
+            'sha1',                    // 2. Algoritmo estándar
+            30,                        // 3. Período (Entero obligatorio)
+            6,                         // 4. Dígitos del código
+            'Gestion Usuarios',        // 5. Nombre de tu App (Issuer)
+            $this->getUserIdentifier() // 6. Identificador del usuario (Email)
+        );
+    }
+
+    public function getTotpSecret(): ?string
+    {
+        return $this->totpSecret;
+    }
+
+    public function setTotpSecret(?string $totpSecret): self
+    {
+        $this->totpSecret = $totpSecret;
         return $this;
     }
 }

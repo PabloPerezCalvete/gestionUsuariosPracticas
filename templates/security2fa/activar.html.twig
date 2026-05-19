@@ -1,0 +1,27 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Activar Doble Factor (2FA){% endblock %}
+
+{% block body %}
+<div class="container mt-5" style="max-width: 500px;">
+    <div class="card shadow-sm p-4 text-center">
+        <h2> Activar Seguridad 2FA</h2>
+        <p class="text-muted text-start mt-3">
+            Escanea el siguiente código QR con tu aplicación de autenticación (Google Authenticator, Authy, Microsoft Authenticator, etc.).
+        </p>
+
+        <div class="my-4">
+            <!-- Pintamos el código QR generado en Base64 -->
+            <img src="{{ qrCode }}" alt="Código QR de Seguridad" class="img-fluid border p-2 bg-white">
+        </div>
+
+        <div class="alert alert-secondary text-start">
+            <small><strong>¿No puedes escanearlo?</strong> Introduce este código manualmente en tu app:</small>
+            <br>
+            <code class="text-dark font-weight-bold" style="font-size: 1.1rem; letter-spacing: 1px;">{{ secret }}</code>
+        </div>
+
+        <a href="{{ path('app_user_profile') }}" class="btn btn-primary w-100 mt-2">Ya lo he escaneado, Volver</a>
+    </div>
+</div>
+{% endblock %}
