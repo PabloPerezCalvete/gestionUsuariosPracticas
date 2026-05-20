@@ -38,17 +38,7 @@
           
          
                 {% endif %}</td>
-                {% if grupo.users|length > 0 %}
-                    <div class="d-flex flex-wrap gap-1">
-                        {% for usuario in grupo.users %}
-                            <span class="badge bg-info text-dark">
-                                {{ usuario.email }} 
-                            </span>
-                        {% endfor %}
-                    </div>
                 
-         
-                {% endif %}
                 <td>
                     <a href="{{ path('app_grupo_show', {'id': grupo.id}) }}" class="btn btn-info btn-sm">
                         Ver
