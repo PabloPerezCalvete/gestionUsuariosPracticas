@@ -43,6 +43,9 @@ class Usuario1 implements UserInterface, PasswordAuthenticatedUserInterface, Two
     #[ORM\OneToMany(targetEntity: Equipo::class, mappedBy: 'propietario')]
     private Collection $equipos;
 
+    #[ORM\Column(length: 10, options: ['default' => 'light'])]
+    private ?string $theme = 'light';
+
     #[ORM\ManyToOne(inversedBy: 'users')]
     #[ORM\JoinColumn(nullable: true)]
     private ?Grupo $grupo = null;
@@ -98,6 +101,17 @@ class Usuario1 implements UserInterface, PasswordAuthenticatedUserInterface, Two
     public function setPassword(string $password): static
     {
         $this->password = $password;
+        return $this;
+    }
+    public function getTheme(): ?string
+    {
+        return $this->theme ?? 'light';
+    }
+
+    public function setTheme(string $theme): static
+    {
+        $this->theme = $theme;
+
         return $this;
     }
 

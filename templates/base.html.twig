@@ -9,19 +9,22 @@
     <style>
         body {
             margin: 0;
-            background-color: #f4f4f4;
+            /* 💻 Ajustado para cambiar de color automáticamente */
+            background-color: var(--bs-body-bg);
+            color: var(--bs-body-color);
         }
 
         /* SIDEBAR */
         .sidebar {
-            background-color: #f8f9fa;
+            /* 💻 Ajustado para que el fondo se vuelva oscuro solo */
+            background-color: var(--bs-tertiary-bg);
             position: fixed;
             top: 0;
             left: 0;
             width: 240px;
             height: 100vh;
             overflow-y: auto;
-            border-right: 1px solid #ddd;
+            border-right: 1px solid var(--bs-border-color);
             transition: width 0.3s ease;
         }
 
@@ -33,13 +36,13 @@
         }
 
         .sidebar-title {
-            color: #333;
+            color: var(--bs-heading-color);
             font-weight: 600;
-            padding: 10px 0;
+            padding: 10px 15px; /* Añadido padding para que no se pegue al borde */
         }
 
         .sidebar .nav-link {
-            color: #444;
+            color: var(--bs-nav-link-color);
             padding: 10px 15px;
             border-radius: 4px;
             margin-bottom: 3px;
@@ -47,38 +50,32 @@
         }
 
         .sidebar .nav-link:hover {
-            background-color: #e9ecef;
-            color: #000;
+            background-color: var(--bs-tertiary-color);
+            color: var(--bs-heading-color);
         }
 
         .sidebar .nav-link.active {
-            background-color: #dee2e6;
+            background-color: var(--bs-primary-border-subtle);
+            color: var(--bs-primary-text-emphasis);
             font-weight: 500;
         }
 
         .sidebar hr {
-            border-color: #ddd;
+            border-color: var(--bs-border-color);
         }
 
         .user-link {
-            color: #555;
+            color: white; /* Forzado a blanco porque la topbar es naranja fija */
             text-decoration: none;
             padding: 8px 15px;
             display: block;
         }
 
         .user-link:hover {
-            color: #000;
+            color: #eee;
         }
 
-        .admin-label {
-            color: #999;
-            font-size: 0.75rem;
-            padding-left: 15px;
-            text-transform: uppercase;
-        }
-
-        /* TOPBAR */
+        /* TOPBAR (Mantiene su color corporativo naranja en ambos modos) */
         .topbar {
             background-color: #f58220;
             color: white;
@@ -119,14 +116,13 @@
 
 <body>
 
-<!-- SIDEBAR (empieza cerrada) -->
-<nav id="sidebar" class="sidebar  ">
-
-    <h4 class="sidebar-title">Gestion usuarios</h4>
+<nav id="sidebar" class="sidebar">
+    <div class="pt-3">
+        <h4 class="sidebar-title">Gestión usuarios</h4>
+    </div>
     <hr>
 
-    <ul class="nav flex-column">
-
+    <ul class="nav flex-column px-2">
         {% if is_granted('ROLE_ADMIN') %}
             <li class="nav-item">
                 <a href="{{ path('app_equipo_index') }}" 
@@ -141,56 +137,53 @@
                     Usuarios
                 </a>
             </li>
-              <li class="nav-item">
+            <li class="nav-item">
                 <a href="{{ path('app_grupo_index') }}" 
                    class="nav-link {{ app.request.get('_route') starts with 'app_grupo' ? 'active' }}">
                     Grupos
                 </a>
             </li>
         {% endif %}
-
-
         <hr>
-
-        
     </ul>
 </nav>
 
-<!-- CONTENIDO -->
 <div id="main" class="main-content">
 
 <div class="topbar d-flex align-items-center justify-content-between px-3">
 
-    <!-- Bloque Izquierdo: Botón y Título -->
     <div class="d-flex align-items-center">
         <button class="toggle-btn me-3" onclick="toggleSidebar()">
             ☰
         </button>
         <div class="text-center" style="position: absolute; left: 50%; transform: translateX(-50%); width: auto; z-index: 1;">
-        <span class="h5 mb-0">
-            {% block page_title %}Inicio{% endblock %}
-        </span>
+            <span class="h5 mb-0">
+                {% block page_title %}Inicio{% endblock %}
+            </span>
         </div>
     </div>
 
-    <!-- Bloque Derecho: Usuario y Logout -->
-    <div class="d-flex align-items-center">
+    <div class="d-flex align-items-center gap-2" style="z-index: 2;">
+        
+        <button class="btn btn-sm btn-link text-white text-decoration-none me-2" id="btn-theme-toggle" type="button" title="Cambiar tema">
+            <span id="theme-icon">🌙</span>
+        </button>
+
         {% if is_granted('IS_AUTHENTICATED_FULLY') %}
-            <!-- Cambiamos li por span para que no salte de línea -->
-            <span class="nav-item me-3">
-                <a href="{{ path('app_user_profile') }}" class="user-link text-decoration-none">
-                    <strong>{{ app.user.userIdentifier }}</strong>
+            <span class="nav-item">
+                <a href="{{ path('app_user_profile') }}" class="user-link text-decoration-none p-0 fw-bold">
+                    {{ app.user.userIdentifier }}
                 </a>
             </span>
 
-            <span class="nav-item">
-                <a href="{{ path('app_logout') }}" class="btn btn-sm btn-outline-danger">
+            <span class="nav-item ms-2">
+                <a href="{{ path('app_logout') }}" class="btn btn-sm btn-outline-light">
                     Logout
                 </a>
             </span>
         {% else %}
             <span class="nav-item">
-                <a href="{{ path('app_login') }}" class="nav-link">
+                <a href="{{ path('app_login') }}" class="nav-link text-white">
                     Login
                 </a>
             </span>
@@ -205,7 +198,6 @@
 
 </div>
 
-<!-- JS -->
 <script>
 function toggleSidebar() {
     const sidebar = document.getElementById('sidebar');
@@ -214,6 +206,58 @@ function toggleSidebar() {
     sidebar.classList.toggle('collapsed');
     main.classList.toggle('full');
 }
+
+// LÓGICA DE MODO OSCURO / CLARO
+document.addEventListener('DOMContentLoaded', function () {
+    const htmlElement = document.documentElement;
+    const themeBtn = document.getElementById('btn-theme-toggle');
+    const themeIcon = document.getElementById('theme-icon');
+
+    // 1. Cargamos el tema guardado en el usuario de Symfony directamente desde la base de datos
+    // Si el campo está vacío o el usuario no está logueado, por defecto ponemos 'light'
+    const temaGuardado = "{{ (app.user and app.user.theme) ? app.user.theme : 'light' }}";
+    aplicarTema(temaGuardado);
+
+    // 2. Escuchar el click en el símbolo (☼ / ☾)
+    themeBtn.addEventListener('click', function () {
+        const temaActual = htmlElement.getAttribute('data-bs-theme');
+        const nuevoTema = (temaActual === 'dark') ? 'light' : 'dark';
+        
+        // Cambiamos el color de la pantalla inmediatamente para que no haya retraso visual
+        aplicarTema(nuevoTema);
+
+        // 3. Enviamos el cambio al servidor por detrás (solo si el usuario ha iniciado sesión)
+        {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+            fetch("{{ path('app_user_update_theme') }}", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ theme: nuevoTema })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) console.error('Error del servidor:', data.error);
+            })
+            .catch(error => console.error('Error en la petición fetch:', error));
+        {% endif %}
+    });
+
+    // Función que pinta el símbolo y cambia el modo de Bootstrap 5
+    function aplicarTema(tema) {
+        htmlElement.setAttribute('data-bs-theme', tema);
+
+        if (tema === 'dark') {
+            themeIcon.textContent = '☼';
+            themeIcon.style.fontSize = '28px';
+            themeIcon.style.color = '#000000';
+        } else {
+            themeIcon.textContent = '☾';
+            themeIcon.style.fontSize = '28px';
+            themeIcon.style.color = '#000000';
+        }
+    }
+});
 </script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
