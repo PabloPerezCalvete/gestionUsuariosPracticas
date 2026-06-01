@@ -18,59 +18,58 @@
         {% endfor %}
     {% endfor %}
 
-
-    <button class="btn btn-success" type="button" data-bs-toggle="collapse" data-bs-target="#contenedorNuevoEquipo" aria-expanded="false" aria-controls="contenedorNuevoEquipo">
+    <button class="btn btn-success mb-3" type="button" data-bs-toggle="collapse" data-bs-target="#contenedorNuevoEquipo" aria-expanded="false" aria-controls="contenedorNuevoEquipo">
         <i class="fas fa-plus"></i> + Nuevo Equipo
     </button>
+    
     {# FORMULARIO #}
-   <div class="collapse mb-4" id="contenedorNuevoEquipo">
-    <div class="card card-body shadow-sm">
-        <h5 class="mb-3">Registrar Equipo</h5>
-        <hr>
+    <div class="collapse mb-4" id="contenedorNuevoEquipo">
+        <div class="card card-body shadow-sm">
+            <h5 class="mb-3">Registrar Equipo</h5>
+            <hr>
 
-        {{ form_start(form) }}
-            <div class="row g-3">
-                <div class="col-md-6">
-                    {{ form_row(form.marca, {'attr': {'class': 'form-control'}}) }}
-                </div>
-                <div class="col-md-6">
-                    {{ form_row(form.modelo, {'attr': {'class': 'form-control'}}) }}
-                </div>
-                <div class="col-md-6">
-                    {{ form_row(form.numeroSerie, {'attr': {'class': 'form-control'}}) }}
-                </div>
-                <div class="col-md-6">
-                    {{ form_row(form.tipo, {'attr': {'class': 'form-select'}}) }}
-                </div>
-                <div class="col-md-6">
-                    {{ form_row(form.estado, {'attr': {'class': 'form-select'}}) }}
-                </div>
-                <div class="col-md-6">
-                    {{ form_row(form.propietario, {
-                        'label': 'Asignar a Usuario',
-                        'attr': {'class': 'form-select'}
-                    }) }}
-                </div>
-            </div> 
+            {{ form_start(form) }}
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        {{ form_row(form.marca, {'attr': {'class': 'form-control'}}) }}
+                    </div>
+                    <div class="col-md-6">
+                        {{ form_row(form.modelo, {'attr': {'class': 'form-control'}}) }}
+                    </div>
+                    <div class="col-md-6">
+                        {{ form_row(form.numeroSerie, {'attr': {'class': 'form-control'}}) }}
+                    </div>
+                    <div class="col-md-6">
+                        {{ form_row(form.tipo, {'attr': {'class': 'form-select'}}) }}
+                    </div>
+                    <div class="col-md-6">
+                        {{ form_row(form.estado, {'attr': {'class': 'form-select'}}) }}
+                    </div>
+                    <div class="col-md-6">
+                        {{ form_row(form.propietario, {
+                            'label': 'Asignar a Usuario',
+                            'attr': {'class': 'form-select'}
+                        }) }}
+                    </div>
+                </div> 
 
-            <div class="mt-4 d-flex gap-2">
-                <button type="submit" class="btn btn-success">
-                    Guardar Equipo
-                </button>
-                <!-- Botón extra para cerrar el formulario si se arrepienten -->
-                <button type="button" class="btn btn-outline-secondary" data-bs-toggle="collapse" data-bs-target="#contenedorNuevoEquipo">
-                    Cancelar
-                </button>
-            </div>
-
-        {{ form_end(form) }}
+                <div class="mt-4 d-flex gap-2">
+                    <button type="submit" class="btn btn-success">
+                        Guardar Equipo
+                    </button>
+                    <button type="button" class="btn btn-outline-secondary" data-bs-toggle="collapse" data-bs-target="#contenedorNuevoEquipo">
+                        Cancelar
+                    </button>
+                </div>
+            {{ form_end(form) }}
+        </div>
     </div>
-    </div>
+
     {# TABLA #}
     <h3 class="mb-3">Listado de Equipos</h3>
 
     <div class="table-responsive">
-        <table class="table table-striped table-hover align-middle">
+        <table class="table table-striped table-hover align-middle" id="tabla-equipos">
             <thead class="table-dark">
                 <tr>
                     <th>Marca</th>
@@ -79,65 +78,60 @@
                     <th>Tipo</th>
                     <th>Estado</th>
                     <th>Propietario</th>
-                    <th>Acciones</th>
+                    <th class="no-sort">Acciones</th>
                 </tr>
             </thead>
 
             <tbody>
-            {% for e in equipos %}
-                <tr>
-                    <td>{{ e.marca }}</td>
-                    <td>{{ e.modelo }}</td>
-                    <td><code>{{ e.numeroSerie }}</code></td>
-                    <td>{{ e.tipo }}</td>
+            {% if equipos|length > 0 %}
+                {% for e in equipos %}
+                    <tr>
+                        <td>{{ e.marca }}</td>
+                        <td>{{ e.modelo }}</td>
+                        <td><code>{{ e.numeroSerie }}</code></td>
+                        <td>{{ e.tipo }}</td>
 
-                    <td>
-                        <span class="badge bg-secondary">
-                            {{ e.estado }}
-                        </span>
-                    </td>
-
-                    <td>
-                        {% if e.propietario %}
-                            <span class="text-primary fw-bold">
-                                {{ e.propietario.email }}
+                        <td>
+                            <span class="badge bg-secondary">
+                                {{ e.estado }}
                             </span>
-                        {% else %}
-                            <span class="text-muted fst-italic">
-                                Disponible (Stock)
-                            </span>
-                        {% endif %}
-                    </td>
+                        </td>
 
-                    <td>
-                        <div class="d-flex gap-2">
+                        <td>
+                            {% if e.propietario %}
+                                <span class="text-primary fw-bold">
+                                    {{ e.propietario.email }}
+                                </span>
+                            {% else %}
+                                <span class="text-muted fst-italic">
+                                    Disponible (Stock)
+                                </span>
+                            {% endif %}
+                        </td>
 
-                            <a href="{{ path('app_equipo_edit', {id: e.id}) }}"
-                               class="btn btn-sm btn-warning">
-                                Editar
-                            </a>
+                        <td>
+                            <div class="d-flex gap-2">
+                                <a href="{{ path('app_equipo_edit', {id: e.id}) }}" class="btn btn-sm btn-warning">
+                                    Editar
+                                </a>
 
-                            <form method="post"
-                                  action="{{ path('app_equipo_delete', {id: e.id}) }}"
-                                  onsubmit="return confirm('¿Seguro que quieres eliminar este equipo?');">
-
-                                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ e.id) }}">
-
-                                <button class="btn btn-sm btn-danger">
-                                    Borrar
-                                </button>
-                            </form>
-
-                        </div>
-                    </td>
-                </tr>
+                                <form method="post" action="{{ path('app_equipo_delete', {id: e.id}) }}" onsubmit="return confirm('¿Seguro que quieres eliminar este equipo?');">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ e.id) }}">
+                                    <button class="btn btn-sm btn-danger">
+                                        Borrar
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                {% endfor %}
             {% else %}
                 <tr>
                     <td colspan="7" class="text-center text-muted py-4">
                         No hay equipos registrados en el inventario.
                     </td>
                 </tr>
-            {% endfor %}
+            {% endif %}
             </tbody>
         </table>
     </div>
@@ -149,4 +143,23 @@
     </div>
 
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    if (typeof $ !== 'undefined' && $.fn.DataTable) {
+        $('#tabla-equipos').DataTable({
+            language: {
+                url: 'https://cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json'
+            },
+            columnDefs: [
+                { targets: 'no-sort', orderable: false, searchable: false }
+            ],
+            pageLength: 10,
+            lengthMenu: [5, 10, 25, 50],
+            destroy: true 
+        });
+    }
+});
+</script>
+
 {% endblock %}

@@ -55,18 +55,19 @@
     <!-- LISTADO DE USUARIOS -->
     <h2 class="mb-3">Usuarios Existentes</h2>
 
-    <div class="table-responsive">
-        <table class="table table-striped table-hover align-middle">
+<div class="table-responsive">
+    <table class="table table-striped table-hover align-middle" id="tabla-usuarios">
 
-            <thead class="table-dark">
-                <tr>
-                    <th>Email</th>
-                    <th>Roles</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
+        <thead class="table-dark">
+            <tr>
+                <th>Email</th>
+                <th>Roles</th>
+                <th class="no-sort">Acciones</th>
+            </tr>
+        </thead>
 
-            <tbody>
+        <tbody>
+        {% if users|length > 0 %}
             {% for u in users %}
                 <tr>
                     <td>{{ u.email }}</td>
@@ -81,7 +82,6 @@
 
                     <td>
                         <div class="d-flex gap-2">
-
                             <a href="{{ path('app_user_edit', {id: u.id}) }}"
                                class="btn btn-sm btn-warning">
                                 Editar
@@ -97,21 +97,42 @@
                                     Eliminar
                                 </button>
                             </form>
-
                         </div>
                     </td>
                 </tr>
-            {% else %}
-                <tr>
-                    <td colspan="3" class="text-center text-muted py-4">
-                        No hay usuarios registrados
-                    </td>
-                </tr>
             {% endfor %}
-            </tbody>
+        {% else %}
+            <tr>
+                <td></td>
+                <td class="text-center text-muted py-4">No hay usuarios registrados</td>
+                <td></td>
+            </tr>
+        {% endif %}
+        </tbody>
 
-        </table>
-    </div>
+    </table>
+</div>
+
 
 </div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Verificamos si jQuery y DataTables están cargados antes de ejecutar
+    if (typeof $ !== 'undefined' && $.fn.DataTable) {
+        $('#tabla-usuarios').DataTable({
+            language: {
+                url: 'https://cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json'
+            },
+            columnDefs: [
+                { targets: 'no-sort', orderable: false, searchable: false }
+            ],
+            pageLength: 10,
+            lengthMenu: [5, 10, 25, 50],
+            // Esto evita que la fila "No hay usuarios" rompa el diseño si la tabla tiene datos
+            destroy: true 
+        });
+    }
+});
+</script>
+
 {% endblock %}

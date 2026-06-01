@@ -5,56 +5,81 @@
 {% block body %}
 <div class="container mt-4">
 
-    
-
     <a href="{{ path('app_grupo_new') }}" class="btn btn-success mb-3">
         Nuevo Grupo
     </a>
 
-    <table class="table table-bordered table-striped">
-        <thead class="table-dark">
-            <tr>
-                <th>ID</th>
-                <th>Nombre</th>
-                <th>Descripción</th>
-                <th>Usuarios en el Grupo</th>
-                <th>Acciones</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for grupo in grupos %}
-            <tr>
-                <td>{{ grupo.id }}</td>
-                <td>{{ grupo.nombre }}</td>
-                <td>{{ grupo.descripcion }}</td>
-                <td> {% if grupo.users|length > 0 %}
-                    <div class="d-flex flex-wrap gap-1">
-                        {% for usuario in grupo.users %}
-                            <span class="badge bg-info text-dark">
-                                {{ usuario.email }} {# O usuario.nombre, según tu entidad Usuario #}
-                            </span>
-                        {% endfor %}
-                    </div>
-          
-         
-                {% endif %}</td>
-                
-                <td>
-                    <a href="{{ path('app_grupo_show', {'id': grupo.id}) }}" class="btn btn-info btn-sm">
-                        Ver
-                    </a>
-                    <a href="{{ path('app_grupo_edit', {'id': grupo.id}) }}" class="btn btn-warning btn-sm">
-                        Editar
-                    </a>
-                </td>
-            </tr>
-        {% else %}
-            <tr>
-                <td colspan="4" class="text-center">No hay grupos registrados</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+    <div class="table-responsive">
+        <table class="table table-bordered table-striped align-middle" id="tabla-grupos">
+            <thead class="table-dark">
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Descripción</th>
+                    <th>Usuarios en el Grupo</th>
+                    <th class="no-sort">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% if grupos|length > 0 %}
+                {% for grupo in grupos %}
+                    <tr>
+                        <td>{{ grupo.id }}</td>
+                        <td>{{ grupo.nombre }}</td>
+                        <td>{{ grupo.descripcion }}</td>
+                        <td> 
+                            {% if grupo.users|length > 0 %}
+                                <div class="d-flex flex-wrap gap-1">
+                                    {% for usuario in grupo.users %}
+                                        <span class="badge bg-info text-dark">
+                                            {{ usuario.email }}
+                                        </span>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                <span class="text-muted fst-italic">Sin usuarios</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <div class="d-flex gap-1">
+                                <a href="{{ path('app_grupo_show', {'id': grupo.id}) }}" class="btn btn-info btn-sm">
+                                    Ver
+                                </a>
+                                <a href="{{ path('app_grupo_edit', {'id': grupo.id}) }}" class="btn btn-warning btn-sm">
+                                    Editar
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td colspan="5" class="text-center text-muted py-4">
+                        No hay grupos registrados
+                    </td>
+                </tr>
+            {% endif %}
+            </tbody>
+        </table>
+    </div>
 
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    if (typeof $ !== 'undefined' && $.fn.DataTable) {
+        $('#tabla-grupos').DataTable({
+            language: {
+                url: 'https://cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json'
+            },
+            columnDefs: [
+                { targets: 'no-sort', orderable: false, searchable: false }
+            ],
+            pageLength: 10,
+            lengthMenu: [5, 10, 25, 50],
+            destroy: true 
+        });
+    }
+});
+</script>
 {% endblock %}
