@@ -10,14 +10,12 @@
     <style>
         body {
             margin: 0;
-            /* 💻 Ajustado para cambiar de color automáticamente */
             background-color: var(--bs-body-bg);
             color: var(--bs-body-color);
         }
 
         /* SIDEBAR */
         .sidebar {
-            /* 💻 Ajustado para que el fondo se vuelva oscuro solo */
             background-color: var(--bs-tertiary-bg);
             position: fixed;
             top: 0;
@@ -39,7 +37,7 @@
         .sidebar-title {
             color: var(--bs-heading-color);
             font-weight: 600;
-            padding: 10px 15px; /* Añadido padding para que no se pegue al borde */
+            padding: 10px 15px;
         }
 
         .sidebar .nav-link {
@@ -66,7 +64,7 @@
         }
 
         .user-link {
-            color: white; /* Forzado a blanco porque la topbar es naranja fija */
+            color: white;
             text-decoration: none;
             padding: 8px 15px;
             display: block;
@@ -76,7 +74,7 @@
             color: #eee;
         }
 
-        /* TOPBAR (Mantiene su color corporativo naranja en ambos modos) */
+        /* TOPBAR */
         .topbar {
             background-color: #f58220;
             color: white;
@@ -126,6 +124,13 @@
     <ul class="nav flex-column px-2">
         {% if is_granted('ROLE_ADMIN') %}
             <li class="nav-item">
+                <a href="{{ path('app_dashboard') }}" 
+                   class="nav-link {{ app.request.get('_route') == 'app_dashboard' ? 'active' }}">
+                    Inicio 
+                </a>
+            </li>
+
+            <li class="nav-item">
                 <a href="{{ path('app_equipo_index') }}" 
                    class="nav-link {{ app.request.get('_route') starts with 'app_equipo' ? 'active' }}">
                     Equipos
@@ -138,6 +143,7 @@
                     Usuarios
                 </a>
             </li>
+            
             <li class="nav-item">
                 <a href="{{ path('app_grupo_index') }}" 
                    class="nav-link {{ app.request.get('_route') starts with 'app_grupo' ? 'active' }}">
@@ -214,20 +220,15 @@ document.addEventListener('DOMContentLoaded', function () {
     const themeBtn = document.getElementById('btn-theme-toggle');
     const themeIcon = document.getElementById('theme-icon');
 
-    // 1. Cargamos el tema guardado en el usuario de Symfony directamente desde la base de datos
-    // Si el campo está vacío o el usuario no está logueado, por defecto ponemos 'light'
     const temaGuardado = "{{ (app.user and app.user.theme) ? app.user.theme : 'light' }}";
     aplicarTema(temaGuardado);
 
-    // 2. Escuchar el click en el símbolo (☼ / ☾)
     themeBtn.addEventListener('click', function () {
         const temaActual = htmlElement.getAttribute('data-bs-theme');
         const nuevoTema = (temaActual === 'dark') ? 'light' : 'dark';
         
-        // Cambiamos el color de la pantalla inmediatamente para que no haya retraso visual
         aplicarTema(nuevoTema);
 
-        // 3. Enviamos el cambio al servidor por detrás (solo si el usuario ha iniciado sesión)
         {% if is_granted('IS_AUTHENTICATED_FULLY') %}
             fetch("{{ path('app_user_update_theme') }}", {
                 method: "POST",
@@ -244,7 +245,6 @@ document.addEventListener('DOMContentLoaded', function () {
         {% endif %}
     });
 
-    // Función que pinta el símbolo y cambia el modo de Bootstrap 5
     function aplicarTema(tema) {
         htmlElement.setAttribute('data-bs-theme', tema);
 

@@ -65,11 +65,11 @@
         </div>
     </div>
 
-    {# TABLA #}
+    {# TABLA (SERVER-SIDE) #}
     <h3 class="mb-3">Listado de Equipos</h3>
 
     <div class="table-responsive">
-        <table class="table table-striped table-hover align-middle" id="tabla-equipos">
+        <table class="table table-striped table-hover align-middle" id="tabla-equipos-server">
             <thead class="table-dark">
                 <tr>
                     <th>Marca</th>
@@ -81,58 +81,8 @@
                     <th class="no-sort">Acciones</th>
                 </tr>
             </thead>
-
             <tbody>
-            {% if equipos|length > 0 %}
-                {% for e in equipos %}
-                    <tr>
-                        <td>{{ e.marca }}</td>
-                        <td>{{ e.modelo }}</td>
-                        <td><code>{{ e.numeroSerie }}</code></td>
-                        <td>{{ e.tipo }}</td>
-
-                        <td>
-                            <span class="badge bg-secondary">
-                                {{ e.estado }}
-                            </span>
-                        </td>
-
-                        <td>
-                            {% if e.propietario %}
-                                <span class="text-primary fw-bold">
-                                    {{ e.propietario.email }}
-                                </span>
-                            {% else %}
-                                <span class="text-muted fst-italic">
-                                    Disponible (Stock)
-                                </span>
-                            {% endif %}
-                        </td>
-
-                        <td>
-                            <div class="d-flex gap-2">
-                                <a href="{{ path('app_equipo_edit', {id: e.id}) }}" class="btn btn-sm btn-warning">
-                                    Editar
-                                </a>
-
-                                <form method="post" action="{{ path('app_equipo_delete', {id: e.id}) }}" onsubmit="return confirm('¿Seguro que quieres eliminar este equipo?');">
-                                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ e.id) }}">
-                                    <button class="btn btn-sm btn-danger">
-                                        Borrar
-                                    </button>
-                                </form>
-                            </div>
-                        </td>
-                    </tr>
-                {% endfor %}
-            {% else %}
-                <tr>
-                    <td colspan="7" class="text-center text-muted py-4">
-                        No hay equipos registrados en el inventario.
-                    </td>
-                </tr>
-            {% endif %}
-            </tbody>
+                </tbody>
         </table>
     </div>
 
@@ -147,16 +97,21 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     if (typeof $ !== 'undefined' && $.fn.DataTable) {
-        $('#tabla-equipos').DataTable({
-            language: {
-                url: 'https://cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json'
+        $('#tabla-equipos-server').DataTable({
+            "processing": true, // Muestra el indicador de "Cargando..." al buscar o cambiar de página
+            "serverSide": true, // Activa el procesamiento del lado del servidor
+            "ajax": {
+                "url": "{{ path('app_equipo_server_side') }}", // Dirección de la ruta que creamos en el controlador
+                "type": "POST"
             },
-            columnDefs: [
-                { targets: 'no-sort', orderable: false, searchable: false }
+            "columnDefs": [
+                { "targets": 'no-sort', "orderable": false, "searchable": false }
             ],
-            pageLength: 10,
-            lengthMenu: [5, 10, 25, 50],
-            destroy: true 
+            "language": {
+                "url": 'https://cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json'
+            },
+            "pageLength": 10,
+            "lengthMenu": [5, 10, 25, 50]
         });
     }
 });
